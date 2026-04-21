@@ -70,7 +70,7 @@ export default function App() {
           alertsHidden={alertsHidden}
         />
 
-        <main className="flex-1 overflow-y-auto bg-muted/30">
+        <main className="flex-1 overflow-y-auto bg-[oklch(0.985_0.003_195)]">
           <div className="p-6 lg:p-8 max-w-[1600px] mx-auto">
             {current === "dashboard" && <Dashboard onOpenPatient={openPatientByFolio} />}
             {current === "ingresos" && <Ingresos onOpenPatient={openPatient} />}
