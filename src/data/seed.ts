@@ -235,3 +235,195 @@ export const CONTROLES: Control[] = PATIENTS.slice(0, 20).map((p, i) => ({
   profesional: PROFESIONALES[i % PROFESIONALES.length],
   estado: (["Agendado", "Realizado", "No asistió", "Reagendado", "Agendado"] as const)[i % 5],
 }))
+
+// EPT (Evaluación Puesto de Trabajo)
+export interface EPT {
+  folio: string
+  numero: string
+  paciente: string
+  rut: string
+  razonSocial: string
+  unidad: string
+  cargo: string
+  tipoEvaluacion: "EM" | "EPS" | "EM+EPS"
+  eptista: string
+  factorRiesgo: string
+  nEntrevistas: number
+  testigos: boolean
+  cantidadTestigos: number
+  plazoInformeEPT: number
+  plazoPortalISL: number
+  estadoEnvio: "Enviado" | "Pendiente" | "En revisión"
+  estadoCaso: "Activo" | "En tratamiento" | "Pendiente" | "Cerrado"
+}
+
+const EPTISTAS = ["Ps. Lorena Baeza", "Ps. Tomás Jiménez", "Ps. Sofía Retamal"]
+const FACTORES = [
+  "Violencia laboral", "Carga mental alta", "Hostigamiento", "Acoso sexual",
+  "Sobrecarga horaria", "Conflicto de rol", "Violencia verbal",
+]
+const CARGOS = [
+  "Operario turno", "Administrativo", "Supervisor", "Jefe de sección",
+  "Asistente", "Técnico", "Docente", "Auxiliar",
+]
+
+export const EPTS: EPT[] = PATIENTS.slice(0, 14).map((p, i) => {
+  const tipo = (["EM", "EPS", "EM+EPS"] as const)[i % 3]
+  return {
+    folio: p.folio,
+    numero: `EPT-2026-${String(100 + i).padStart(4, "0")}`,
+    paciente: p.nombre,
+    rut: p.rut,
+    razonSocial: p.empresa,
+    unidad: ["Planta Talca", "Oficina Central", "Sucursal Norte", "Operaciones Sur"][i % 4],
+    cargo: CARGOS[i % CARGOS.length],
+    tipoEvaluacion: tipo,
+    eptista: EPTISTAS[i % EPTISTAS.length],
+    factorRiesgo: FACTORES[i % FACTORES.length],
+    nEntrevistas: 2 + (i % 4),
+    testigos: i % 3 === 0,
+    cantidadTestigos: i % 3 === 0 ? 2 + (i % 3) : 0,
+    plazoInformeEPT: 10 + (i % 12),
+    plazoPortalISL: 15 + (i % 18),
+    estadoEnvio: (["Enviado", "Pendiente", "En revisión", "Enviado"] as const)[i % 4],
+    estadoCaso: (["Activo", "En tratamiento", "Pendiente", "Cerrado"] as const)[i % 4],
+  }
+})
+
+// Reintegros
+export interface Reintegro {
+  folio: string
+  paciente: string
+  tipoDerivacion: string
+  numeroRECA: string
+  fechaRECA: string
+  tipoRECA: "EP" | "EC"
+  riesgosCalificados: string
+  medidasCorrectivas: "Implementadas" | "Pendientes" | "Parciales"
+  verificacion: "Verificada" | "Pendiente" | "En proceso"
+  estadoReintegro: "En proceso" | "Reintegrado" | "Pendiente"
+  fechaReintegro: string
+  tipoAlta: string
+}
+
+export const REINTEGROS: Reintegro[] = PATIENTS.slice(0, 12).map((p, i) => ({
+  folio: p.folio,
+  paciente: p.nombre,
+  tipoDerivacion: p.tipoDerivacion,
+  numeroRECA: `RECA-${String(20000 + i * 23).slice(-5)}`,
+  fechaRECA: `${String((i % 28) + 1).padStart(2, "0")}-0${(i % 3) + 1}-2026`,
+  tipoRECA: (["EP", "EC"] as const)[i % 2],
+  riesgosCalificados: ["Psicosocial alto", "Psicosocial medio", "Ergonómico", "Organizacional"][i % 4],
+  medidasCorrectivas: (["Implementadas", "Pendientes", "Parciales"] as const)[i % 3],
+  verificacion: (["Verificada", "Pendiente", "En proceso"] as const)[i % 3],
+  estadoReintegro: (["En proceso", "Reintegrado", "Pendiente"] as const)[i % 3],
+  fechaReintegro: `${String((i % 28) + 1).padStart(2, "0")}-04-2026`,
+  tipoAlta: ["Alta terapéutica", "Alta médica", "Alta psicológica", "Derivación"][i % 4],
+}))
+
+// Agenda slots
+export interface AgendaSlot {
+  profesional: string
+  hora: string
+  paciente: string
+  tipo: string
+  estado: "Confirmada" | "En espera" | "Reagendada"
+}
+
+export const AGENDA_PROFESIONALES = [
+  { key: "camila",  nombre: "Ps. Camila Díaz",     color: "oklch(0.56 0.14 180)" },
+  { key: "rodrigo", nombre: "Ps. Rodrigo Fdez.",   color: "oklch(0.56 0.16 230)" },
+  { key: "alvaro",  nombre: "Dr. Álvaro Soto",     color: "oklch(0.60 0.16 25)" },
+  { key: "javiera", nombre: "Ps. Javiera Pinto",   color: "oklch(0.58 0.18 290)" },
+  { key: "paulina", nombre: "Dra. Paulina Jara",   color: "oklch(0.62 0.14 85)" },
+  { key: "andres",  nombre: "Ps. Andrés Meneses",  color: "oklch(0.60 0.14 155)" },
+]
+
+const SLOTS_SEED: Array<[string, string, number, string, AgendaSlot["estado"]]> = [
+  ["camila", "08:30", 0, "Sesión psicológica", "Confirmada"],
+  ["camila", "09:30", 3, "Control psi.", "Confirmada"],
+  ["camila", "10:30", 5, "Primera consulta", "En espera"],
+  ["camila", "14:30", 8, "Sesión psicológica", "Confirmada"],
+  ["camila", "17:30", 12, "Evaluación EPT", "Confirmada"],
+  ["rodrigo", "09:30", 2, "Sesión psicológica", "Confirmada"],
+  ["rodrigo", "10:30", 7, "Reevaluación", "Confirmada"],
+  ["rodrigo", "11:30", 10, "Sesión psicológica", "En espera"],
+  ["rodrigo", "15:30", 14, "Control psi.", "Reagendada"],
+  ["alvaro", "08:30", 1, "Control médico", "Confirmada"],
+  ["alvaro", "09:30", 4, "Control médico", "Confirmada"],
+  ["alvaro", "11:30", 9, "Control médico", "Confirmada"],
+  ["alvaro", "16:30", 11, "Control médico", "En espera"],
+  ["javiera", "10:30", 6, "Sesión psicológica", "Confirmada"],
+  ["javiera", "12:30", 13, "Primera consulta", "En espera"],
+  ["javiera", "15:30", 18, "Sesión psicológica", "Confirmada"],
+  ["paulina", "09:30", 15, "Control médico", "Confirmada"],
+  ["paulina", "14:30", 19, "Control médico", "Confirmada"],
+  ["paulina", "16:30", 20, "Reevaluación", "Confirmada"],
+  ["andres", "08:30", 16, "Primera consulta", "En espera"],
+  ["andres", "11:30", 17, "Sesión psicológica", "Confirmada"],
+  ["andres", "15:30", 21, "Evaluación EPT", "Confirmada"],
+  ["andres", "17:30", 22, "Sesión psicológica", "Confirmada"],
+]
+
+export const AGENDA_SLOTS: AgendaSlot[] = SLOTS_SEED.map(([prof, hora, pi, tipo, estado]) => ({
+  profesional: prof,
+  hora,
+  paciente: PATIENTS[pi]?.nombre ?? "Paciente",
+  tipo,
+  estado,
+}))
+
+// Reportería — series mensuales
+export const SERIE_INGRESOS = [
+  { mes: "Nov 25", value: 8 },
+  { mes: "Dic 25", value: 10 },
+  { mes: "Ene 26", value: 14 },
+  { mes: "Feb 26", value: 11 },
+  { mes: "Mar 26", value: 16 },
+  { mes: "Abr 26", value: 12 },
+]
+
+export const TIPOS_DERIVACION_SEED = TIPOS_DERIVACION
+
+// Auditoría por paciente
+export interface AuditRow {
+  folio: string
+  paciente: string
+  rut: string
+  mes: string
+  fechaIngreso: string
+  diep: "Sí" | "No"
+  acogida: "Realizada" | "Pendiente"
+  evalMed: "Realizada" | "Pendiente" | "En proceso"
+  evalPsi: "Realizada" | "Pendiente" | "En proceso"
+  plazoInforme: number
+  obstaculizacion: boolean
+  envioInforme: "Enviado" | "Pendiente"
+  recaTipo: "EP" | "EC"
+  recaNumero: string
+  estado: Patient["estado"]
+  tipoAlta: string
+  encuestaSatisfaccion: "Respondida" | "Pendiente" | "No aplica"
+}
+
+const MESES = ["Enero", "Febrero", "Marzo", "Abril"]
+
+export const AUDIT_ROWS: AuditRow[] = PATIENTS.map((p, i) => ({
+  folio: p.folio,
+  paciente: p.nombre,
+  rut: p.rut,
+  mes: MESES[i % 4],
+  fechaIngreso: p.fechaIngreso,
+  diep: (["Sí", "Sí", "No"] as const)[i % 3],
+  acogida: (["Realizada", "Pendiente", "Realizada"] as const)[i % 3],
+  evalMed: p.evaluacionMedica,
+  evalPsi: p.evaluacionPsicologica,
+  plazoInforme: 15 + (i % 20),
+  obstaculizacion: i % 7 === 0,
+  envioInforme: (i % 3 === 0 ? "Pendiente" : "Enviado"),
+  recaTipo: (["EP", "EC"] as const)[i % 2],
+  recaNumero: `RECA-${String(20000 + i * 7).slice(-5)}`,
+  estado: p.estado,
+  tipoAlta: ["Alta terapéutica", "Alta médica", "Alta psicológica", "Derivación", "Abandono"][i % 5],
+  encuestaSatisfaccion: (["Respondida", "Pendiente", "No aplica", "Respondida"] as const)[i % 4],
+}))

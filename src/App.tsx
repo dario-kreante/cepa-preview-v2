@@ -5,7 +5,12 @@ import { AlertsPanel } from "@/components/shell/AlertsPanel"
 import { Dashboard } from "@/pages/Dashboard"
 import { Ingresos } from "@/pages/Ingresos"
 import { PatientSheet } from "@/pages/PatientSheet"
-import { Licencias, Farmacos, Controles, EPT, Reintegro, Auditoria, Agenda, Reportes } from "@/pages/SimplePages"
+import { Licencias, Farmacos, Controles } from "@/pages/SimplePages"
+import { EPT } from "@/pages/EPT"
+import { Reintegro } from "@/pages/Reintegro"
+import { Auditoria } from "@/pages/Auditoria"
+import { Agenda } from "@/pages/Agenda"
+import { Reportes } from "@/pages/Reportes"
 import { PATIENTS, type Patient } from "@/data/seed"
 
 const TITLE_MAP: Record<NavKey, string> = {
